@@ -22,6 +22,17 @@
     button {
       padding: 4px 10px;
     }
+    #debug {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      font-size: 18px;
+      line-height: 1;
+    }
   </style>
 </head>
 <body>
@@ -31,6 +42,7 @@
     <button id="reload">Reload</button>
     <input type="text" id="urlInput" placeholder="https://example.org" />
     <button id="go">Go</button>
+    <button id="debug" title="Debug" aria-label="Debug">🐞</button>
   </div>
   <iframe id="webview" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" style="width:100%;height:calc(100vh - 40px);border:0;"></iframe>
   <script src="renderer.js"></script>

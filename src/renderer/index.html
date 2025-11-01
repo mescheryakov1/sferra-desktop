@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>sferra-desktop</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+    #toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px;
+      background: #f0f0f0;
+    }
+    #urlInput {
+      flex: 1;
+      padding: 4px 6px;
+    }
+    button {
+      padding: 4px 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="toolbar">
+    <button id="back">Back</button>
+    <button id="forward">Forward</button>
+    <button id="reload">Reload</button>
+    <input type="text" id="urlInput" placeholder="https://example.org" />
+    <button id="go">Go</button>
+  </div>
+  <iframe id="webview" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" style="width:100%;height:calc(100vh - 40px);border:0;"></iframe>
+  <script src="renderer.js"></script>
+</body>
+</html>

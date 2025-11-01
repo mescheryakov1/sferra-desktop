@@ -1,2 +1,10 @@
 # sferra-desktop
-poc for all-in-one desktop app with embedded cryptography stuff for web apps 
+
+Minimal cross-platform Electron proof of concept.
+
+## Getting started
+
+```bash
+npm install
+npm start
+```

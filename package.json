@@ -1,0 +1,11 @@
+{
+  "name": "sferra-desktop",
+  "version": "0.0.1",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^39.0.0"
+  }
+}

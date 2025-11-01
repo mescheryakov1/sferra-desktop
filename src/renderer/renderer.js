@@ -4,12 +4,96 @@ const reloadButton = document.getElementById('reload');
 const goButton = document.getElementById('go');
 const urlInput = document.getElementById('urlInput');
 const iframe = document.getElementById('webview');
+const debugButton = document.getElementById('debug');
 
 const INITIAL_URL = 'https://www.cryptopro.ru/sites/default/files/products/cades/demopage/cades_bes_sample.html';
 const HOME_URL = 'https://example.org';
 
 let history = [];
 let historyIndex = -1;
+
+const MAX_LOG_ENTRIES = 500;
+let debugWindow = null;
+let debugLogContainer = null;
+const logEntries = [];
+
+const renderLogs = () => {
+  if (!debugWindow || debugWindow.closed || !debugLogContainer) {
+    return;
+  }
+  debugLogContainer.textContent = logEntries.join('\n');
+  debugLogContainer.scrollTop = debugLogContainer.scrollHeight;
+};
+
+const appendLog = (message) => {
+  const timestamp = new Date().toLocaleTimeString();
+  const entry = `[${timestamp}] ${message}`;
+  logEntries.push(entry);
+  if (logEntries.length > MAX_LOG_ENTRIES) {
+    logEntries.splice(0, logEntries.length - MAX_LOG_ENTRIES);
+  }
+  if (debugWindow && debugWindow.closed) {
+    debugWindow = null;
+    debugLogContainer = null;
+  }
+  renderLogs();
+};
+
+const openDebugWindow = () => {
+  if (debugWindow && !debugWindow.closed) {
+    debugWindow.focus();
+    return;
+  }
+
+  debugWindow = window.open('', 'sferra-debug-logs', 'width=480,height=640,resizable=yes,scrollbars=yes');
+  if (!debugWindow) {
+    appendLog('Unable to open debug window (popup may be blocked).');
+    return;
+  }
+
+  const doc = debugWindow.document;
+  doc.title = 'Debug Logs';
+
+  const head = doc.head || doc.createElement('head');
+  if (!doc.head) {
+    doc.documentElement.insertBefore(head, doc.body || null);
+  }
+  head.innerHTML = '';
+  const body = doc.body || doc.createElement('body');
+  if (!doc.body) {
+    doc.documentElement.appendChild(body);
+  }
+  body.innerHTML = '';
+
+  const style = doc.createElement('style');
+  style.textContent = `
+    body {
+      margin: 0;
+      font-family: monospace;
+      background: #111;
+      color: #0f0;
+    }
+    #logContainer {
+      box-sizing: border-box;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-y: auto;
+      height: 100vh;
+    }
+  `;
+  head.appendChild(style);
+
+  debugLogContainer = doc.createElement('div');
+  debugLogContainer.id = 'logContainer';
+  body.appendChild(debugLogContainer);
+
+  debugWindow.addEventListener('beforeunload', () => {
+    debugWindow = null;
+    debugLogContainer = null;
+  });
+
+  renderLogs();
+};
 
 const updateNavButtons = () => {
   backButton.disabled = historyIndex <= 0;
@@ -41,6 +125,7 @@ const navigate = (url, replace = false) => {
     history.push(url);
     historyIndex = history.length - 1;
   }
+  appendLog(`Navigating to ${url}`);
   iframe.src = url;
   urlInput.value = url;
   updateNavButtons();
@@ -50,6 +135,7 @@ backButton.addEventListener('click', () => {
   if (historyIndex > 0) {
     historyIndex -= 1;
     const url = history[historyIndex];
+    appendLog(`Going back to ${url}`);
     iframe.src = url;
     urlInput.value = url;
     updateNavButtons();
@@ -60,6 +146,7 @@ forwardButton.addEventListener('click', () => {
   if (historyIndex !== -1 && historyIndex < history.length - 1) {
     historyIndex += 1;
     const url = history[historyIndex];
+    appendLog(`Going forward to ${url}`);
     iframe.src = url;
     urlInput.value = url;
     updateNavButtons();
@@ -69,6 +156,7 @@ forwardButton.addEventListener('click', () => {
 reloadButton.addEventListener('click', () => {
   if (historyIndex !== -1) {
     const url = history[historyIndex];
+    appendLog(`Reloading ${url}`);
     iframe.src = url;
   }
 });
@@ -86,4 +174,19 @@ urlInput.addEventListener('keydown', (event) => {
 });
 
 updateNavButtons();
+if (debugButton) {
+  debugButton.addEventListener('click', openDebugWindow);
+} else {
+  console.warn('Debug button element is missing.');
+}
+
+iframe.addEventListener('load', () => {
+  appendLog(`Page loaded: ${iframe.src}`);
+});
+
+iframe.addEventListener('error', () => {
+  appendLog(`Error while loading: ${iframe.src}`);
+});
+
+appendLog('Application started');
 navigate(INITIAL_URL);

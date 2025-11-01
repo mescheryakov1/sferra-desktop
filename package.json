@@ -1,11 +1,63 @@
 {
   "name": "sferra-desktop",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "description": "Sferra Desktop Proof-of-Concept Electron Browser",
+  "author": "Kirill Mescheryakov",
+  "license": "MIT",
   "main": "src/main/main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build:win": "electron-builder --win portable",
+    "build:mac": "electron-builder --mac dir zip --config.mac.identity=null",
+    "build:linux": "electron-builder --linux AppImage tar.gz"
+  },
+  "build": {
+    "appId": "com.sferra.desktop",
+    "productName": "sferra-desktop",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "vendor/**"
+    ],
+    "extraResources": [
+      {
+        "from": "vendor/",
+        "to": "vendor",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "artifactName": "sferra-desktop-${version}-win-${arch}.exe"
+    },
+    "mac": {
+      "identity": null,
+      "target": [
+        "dir",
+        "zip"
+      ],
+      "artifactName": "sferra-desktop-${version}-mac-${arch}.${ext}"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "tar.gz"
+      ],
+      "artifactName": "sferra-desktop-${version}-linux-${arch}.${ext}"
+    }
   },
   "devDependencies": {
-    "electron": "^39.0.0"
+    "electron": "^39.0.0",
+    "electron-builder": "^26.0.12"
   }
 }

@@ -4,6 +4,11 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -57,3 +62,10 @@ jobs:
           name: sferra-desktop-${{ runner.os }}
           path: dist/**
           include-hidden-files: true
+
+      - name: Attach artifacts to GitHub release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/**
+          fail_on_unmatched_files: true

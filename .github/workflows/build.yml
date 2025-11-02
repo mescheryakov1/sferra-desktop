@@ -12,8 +12,6 @@ permissions:
 
 jobs:
   build:
-    env:
-      GH_TOKEN: ${{ secrets.GH_TOKEN != '' && secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -70,9 +68,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN != '' && secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Download all artifacts from build matrix
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: release-dist

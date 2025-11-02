@@ -7,9 +7,9 @@
   "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
-    "build:win": "electron-builder --win portable",
-    "build:mac": "electron-builder --mac dir zip --config.mac.identity=null",
-    "build:linux": "electron-builder --linux AppImage tar.gz"
+    "build:win": "electron-builder --win portable -p never",
+    "build:mac": "electron-builder --mac dir zip --config.mac.identity=null -p never",
+    "build:linux": "electron-builder --linux AppImage tar.gz -p never"
   },
   "build": {
     "appId": "com.sferra.desktop",
